@@ -1,0 +1,2 @@
+INSERT INTO Test_Table
+VALUES(1);
