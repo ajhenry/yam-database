@@ -1,4 +1,5 @@
 # Yam Database
+
 > The database for the mobile application, Yam.
 
 <!--
@@ -16,26 +17,28 @@ This is the repo for the database skeleton that backs the mobile application Yam
 ## Installation
 
 First and foremost, **you must have Docker installed**
-*These instructions should be the same for OS X & Linux & Windows*
+
+_These instructions should be the same for OS X & Linux & Windows_
 
 ```sh
 docker run -d -p 5432:5432 --name postgis-db -e POSTGRES_PASSWORD=root -d mdillon/postgis
 
 docker exec -it postgis-db sh -c 'exec psql -U postgres'
 ```
+
 Note: you will be prompted for the postgres password we set, which is **root**
 
-
 From within the psql shell, run these commands to create our user and database
+
 ```sql
 CREATE USER yamuser WITH password 'secret-password';
 CREATE DATABASE yamdb;
-GRANT ALL PRIVILEGES ON DATABASE "yamdb" to yamuser;
-ALTER DATABASE yamdb SET search_path TO yamschema;
+ALTER DATABASE yamdb OWNER TO yamuser;
 \q
 ```
 
 Now lets run the setup files to create the schema and functions
+
 ```sh
 docker cp sql/. postgis-db:/setup-files/
 docker cp setup.sql postgis-db:/setup-files/
@@ -44,58 +47,39 @@ docker exec -it postgis-db sh -c "exec psql -U yamuser -d yamdb -a -f setup-file
 ```
 
 To verify that the tables were created, you may check with psql
+
 ```sh
 docker exec -it postgis-db sh -c "psql -d yamdb -U yamuser"
 ```
 
 Then run this command in the db shell to see all the tables in our schema
+
 ```sh
 \dt yamschema.*
 ```
-*`\q` to quit*
+
+_`\q` to quit_
 
 If there are tables at this point, congrats, you are ready to use the db
 
 If there are no tables, please kill/restart the container and try again
 
-## Usage example
+## Making Changes to the SQL
 
-A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
-
-_For more examples and usage, please refer to the [Wiki][wiki]._
-
-## Development setup
-
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
+This command will **ERASE** everything thats in the Database
 
 ```sh
-make install
-npm test
+docker cp sql/. postgis-db:/setup-files/
+docker cp setup.sql postgis-db:/setup-files/
+docker exec -it postgis-db sh -c "exec psql -U yamuser -d yamdb -a -f setup-files/setup.sql"
 ```
 
 ## Release History
 
-* 0.2.1
-    * CHANGE: Update docs (module code remains unchanged)
-* 0.2.0
-    * CHANGE: Remove `setDefaultXYZ()`
-    * ADD: Add `init()`
-* 0.1.1
-    * FIX: Crash when calling `baz()` (Thanks @GenerousContributorName!)
-* 0.1.0
-    * The first proper release
-    * CHANGE: Rename `foo()` to `bar()`
-* 0.0.1
-    * Work in progress
+- 0.0.1
+  - Work in progress
 
-## Meta
-
-Your Name – [@YourTwitter](https://twitter.com/dbader_org) – YourEmail@example.com
-
-Distributed under the XYZ license. See ``LICENSE`` for more information.
-
-[https://github.com/yourname/github-link](https://github.com/dbader/)
-
+<!--
 ## Contributing
 
 1. Fork it (<https://github.com/yourname/yourproject/fork>)
@@ -103,8 +87,10 @@ Distributed under the XYZ license. See ``LICENSE`` for more information.
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
+-->
 
 <!-- Markdown link & img dfn's -->
+
 [npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/datadog-metrics
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square

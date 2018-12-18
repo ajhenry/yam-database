@@ -7,6 +7,7 @@ Yam Database
 -- First need to delete everything
 DROP SCHEMA yamschema CASCADE;
 CREATE SCHEMA yamschema;
+ALTER DATABASE yamdb SET search_path TO yamschema;
 
 SET SCHEMA 'yamschema';
 BEGIN;
@@ -15,3 +16,4 @@ BEGIN;
 \i setup-files/updates.sql
 \i setup-files/datainsert.sql
 COMMIT;
+
