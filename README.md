@@ -22,7 +22,6 @@ _These instructions should be the same for OS X & Linux & Windows_
 
 ```sh
 docker run -d -p 5432:5432 --name postgis-db -e POSTGRES_PASSWORD=root -d mdillon/postgis
-
 docker exec -it postgis-db sh -c 'exec psql -U postgres'
 ```
 
@@ -33,7 +32,7 @@ From within the psql shell, run these commands to create our user and database
 ```sql
 CREATE USER yamuser WITH password 'secret-password';
 CREATE DATABASE yamdb;
-ALTER DATABASE yamdb OWNER TO yamuser;
+GRANT ALL PRIVILEGES ON DATABASE yamdb TO yamuser;
 \q
 ```
 
@@ -42,8 +41,7 @@ Now lets run the setup files to create the schema and functions
 ```sh
 docker cp sql/. postgis-db:/setup-files/
 docker cp setup.sql postgis-db:/setup-files/
-
-docker exec -it postgis-db sh -c "exec psql -U yamuser -d yamdb -a -f setup-files/setup.sql"
+docker exec -it postgis-db sh -c "exec psql -U postgres -d yamdb -a -f setup-files/setup.sql"
 ```
 
 To verify that the tables were created, you may check with psql
@@ -71,7 +69,7 @@ This command will **ERASE** everything thats in the Database
 ```sh
 docker cp sql/. postgis-db:/setup-files/
 docker cp setup.sql postgis-db:/setup-files/
-docker exec -it postgis-db sh -c "exec psql -U yamuser -d yamdb -a -f setup-files/setup.sql"
+docker exec -it postgis-db sh -c "exec psql -U postgres -d yamdb -a -f setup-files/setup.sql"
 ```
 
 ## Release History
