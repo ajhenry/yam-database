@@ -4,4 +4,4 @@ Andrew Henry
 Yam Database
 */
 
-/* UNUSED FOR NOW */
+/* DO NOT use this unless you have breaking changes */

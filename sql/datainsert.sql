@@ -1,5 +1,19 @@
-INSERT INTO Test_Table
-VALUES(1);
+insert into test_table
+values(1);
 
-INSERT INTO ACCOUNT(CurrentName)
-VALUES('Banana');
+insert into account(current_username)
+values('banana');
+
+insert into account(current_username) 
+values('andrew-dev') 
+returning account_id;
+
+insert into device_link(device_id, account_id)
+values('andrew-dev-phone', 
+    (
+        select account_id
+        from account
+        where current_username = 'andrew-dev'
+    )
+);
+
