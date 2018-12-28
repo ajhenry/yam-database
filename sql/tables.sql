@@ -21,7 +21,7 @@ create table account(
     email email_field,
     password bytea,
     name varchar(254),
-    current_username varchar(100) unique not null  
+    username varchar(100) unique not null  
 );
 
 -- username change event table

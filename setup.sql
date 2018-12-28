@@ -24,5 +24,7 @@ COMMIT;
 -- permissions have be last, as there is nothing created before
 GRANT USAGE ON SCHEMA yamschema TO yamuser;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA yamschema TO yamuser;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA yamschema TO yamuser;
 ALTER DATABASE yamdb SET search_path TO yamschema;
+
 

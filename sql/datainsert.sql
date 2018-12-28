@@ -1,10 +1,10 @@
 insert into test_table
 values(1);
 
-insert into account(current_username)
+insert into account(username)
 values('banana');
 
-insert into account(current_username) 
+insert into account(username) 
 values('andrew-dev') 
 returning account_id;
 
@@ -13,7 +13,7 @@ values('andrew-dev-phone',
     (
         select account_id
         from account
-        where current_username = 'andrew-dev'
+        where username = 'andrew-dev'
     )
 );
 

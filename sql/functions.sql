@@ -115,3 +115,21 @@ create trigger update_score_trigger
 after insert or update on vote
 for each row 
 execute procedure update_score();
+
+-- Function used for creating an account
+create or replace function create_account(in in_username varchar(100), in in_device_id varchar(255))
+returns bigint as 
+$func$
+declare 
+ v_account_id bigint := -1;
+begin
+  insert into account(username)
+  values (in_username) returning account_id into v_account_id;
+
+  insert into device_link(device_id, account_id)
+  values (in_device_id, v_account_id);
+
+  return v_account_id;
+end;
+$func$
+  language plpgsql volatile;
