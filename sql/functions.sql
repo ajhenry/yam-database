@@ -129,6 +129,9 @@ begin
   insert into device_link(device_id, account_id)
   values (in_device_id, v_account_id);
 
+  insert into account_roles(account_id)
+  values (v_account_id);
+
   return v_account_id;
 end;
 $func$

@@ -24,6 +24,12 @@ create table account(
     username varchar(100) unique not null  
 );
 
+create table account_roles(
+    role_id bigserial primary key,
+    account_id bigint references account(account_id),
+    role_type varchar(10) default 'user'
+);
+
 -- username change event table
 create table username_change(
     username_change_id bigserial primary key,
@@ -45,7 +51,8 @@ create table device_link(
 create view account_info as
     select * 
     from account a
-    natural join device_link dl;
+    natural join device_link dl
+    natural join account_roles ar;
 
 
 -- table for posts/comments
@@ -54,14 +61,20 @@ create table post(
     post_type varchar(10) check(post_type in ('comment', 'post')),
     content_title varchar(100),
     content_body varchar(400) not null,
-    resource_type varchar(6) check(resource_type in ('video', 'image', 'gif', 'other')),
-    resource_url varchar(2085),
     parent_id bigint references post(post_id),
     author_id bigint references account(account_id),
     current_author_name varchar(100),
     current_author_image varchar(2085),
     post_date timestamp default CURRENT_TIMESTAMP,
     post_score bigint default 0
+);
+
+-- used for storing resources
+create table resources(
+    resource_id bigserial primary key,
+    post_id bigint references post(post_id),
+    resource_type varchar(6) check(resource_type in ('video', 'image', 'gif', 'other')),
+    resource_url varchar(2085)
 );
 
 -- store location data about posts

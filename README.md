@@ -32,7 +32,6 @@ From within the psql shell, run these commands to create our user and database
 ```sql
 CREATE USER yamuser WITH password 'secret-password';
 CREATE DATABASE yamdb;
-GRANT ALL PRIVILEGES ON DATABASE yamdb TO yamuser;
 \q
 ```
 
