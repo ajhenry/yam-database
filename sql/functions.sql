@@ -12,15 +12,15 @@ begin
 -- we do not need to perform any checks on account
 -- since the current_name field is unique
   --code for insert
-  if  (tg_op = 'insert') then
-        insert into username_change(name, current_account_id) 
-        values(new.current_username, new.account_id);
+  if  (tg_op = 'INSERT') then
+        insert into username_change(username, current_account_id) 
+        values(new.username, new.account_id);
   end if;
 
   --code for update
-  if  (tg_op = 'update') then
-        insert into username_change(name, current_account_id, old_account_id) 
-        values(new.currentname, new.account_id, old.account_id);
+  if  (tg_op = 'UPDATE') then
+        insert into username_change(username, current_account_id, old_account_id) 
+        values(new.username, new.account_id, old.account_id);
   end if;
 return new;
 end;
@@ -40,7 +40,7 @@ $func$
 begin
      -- code for insert
      -- no scores currently recorded for insert
-     if  (tg_op = 'insert') then
+     if  (tg_op = 'INSERT') then
         if (new.vote_type = 'up') then 
           update post
           set post_score = post_score + 1
@@ -55,10 +55,10 @@ begin
      end if;
 
      -- code for update
-     if  (tg_op = 'update') then
+     if  (tg_op = 'UPDATE') then
 
         -- old score was null, update new score
-        if(old.post_type is null) THEN
+        if(old.vote_type is null) THEN
           if (new.vote_type = 'up') then 
             update post
             set post_score = post_score + 1
@@ -73,7 +73,7 @@ begin
         end if;
 
         -- old score was up
-        if(old.post_type = 'up') THEN
+        if(old.vote_type = 'up') THEN
           --downvote from upvote
           if (new.vote_type = 'down') then 
             update post
@@ -90,7 +90,7 @@ begin
         end if;
 
         -- old score was down
-        if(old.post_type = 'down') THEN
+        if(old.vote_type = 'down') THEN
           -- new score is up
           if (new.vote_type = 'up') then 
             update post

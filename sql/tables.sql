@@ -88,8 +88,17 @@ create index on post_coords using gist (loc_data);
 
 -- table for storing votes on posts
 create table vote(
-    vote_id bigserial primary key,
     post_id bigint references post(post_id),
     vote_type varchar(6) check(vote_type in ('up', 'down', null)),
-    account_id bigint references account(account_id)
+    account_id bigint references account(account_id),
+    primary key(post_id, account_id)
 );
+
+
+create view post_data as
+select p.*, pc.loc_data, v.vote_type, v.account_id as voter_id
+from post p
+left join post_coords pc
+on p.post_id = pc.post_id
+left outer join vote v
+on p.post_id = v.post_id;
