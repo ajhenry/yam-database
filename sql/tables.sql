@@ -36,15 +36,15 @@ create table username_change(
     username varchar(100),
     current_account_id bigint references account(account_id) deferrable initially immediate,
     old_account_id bigint references account(account_id) default null,
-    update_time timestamp default CURRENT_TIMESTAMP
+    update_time timestamp default (now() at time zone 'utc')
 );
 
 -- used for storing device id's to a user
 create table device_link(
     device_id varchar(255) primary key,
     account_id bigint references account(account_id),
-    creation_date timestamp default CURRENT_TIMESTAMP,
-    update_date timestamp default CURRENT_TIMESTAMP
+    creation_date timestamp default (now() at time zone 'utc'),
+    update_date timestamp default (now() at time zone 'utc')
 );
 
 -- view used for grabbing account info for a given device
@@ -56,30 +56,31 @@ create view account_info as
 
 
 -- table for posts/comments
+-- TODO: Add trigger for storing posts upon deletion
 create table post(
     post_id bigserial primary key,
     post_type varchar(10) check(post_type in ('comment', 'post')),
     content_title varchar(100),
     content_body varchar(400) not null,
-    parent_id bigint references post(post_id),
+    parent_id bigint references post(post_id) on delete cascade,
     author_id bigint references account(account_id),
     current_author_name varchar(100),
     current_author_image varchar(2085),
-    post_date timestamp default CURRENT_TIMESTAMP,
+    post_date timestamp default now(),
     post_score bigint default 0
 );
 
 -- used for storing resources
 create table resources(
     resource_id bigserial primary key,
-    post_id bigint references post(post_id),
+    post_id bigint references post(post_id) on delete cascade,
     resource_type varchar(6) check(resource_type in ('video', 'image', 'gif', 'other')),
     resource_url varchar(2085)
 );
 
 -- store location data about posts
 create table post_coords(
-    post_id bigint references post(post_id),
+    post_id bigint references post(post_id) on delete cascade,
     loc_data geography
 );
 
@@ -88,13 +89,22 @@ create index on post_coords using gist (loc_data);
 
 -- table for storing votes on posts
 create table vote(
-    post_id bigint references post(post_id),
+    post_id bigint references post(post_id) on delete cascade,
     vote_type varchar(6) check(vote_type in ('up', 'down', null)),
     account_id bigint references account(account_id),
     primary key(post_id, account_id)
 );
 
+-- table for storing subscription 
+create table subscriptions(
+    account_id bigint references account(account_id),
+    loc_data geography
+);
 
+-- create an index based on the location for faster lookup
+create index on subscriptions using gist (loc_data);
+
+-- currently unused
 create view post_data as
 select p.*, pc.loc_data, v.vote_type, v.account_id as voter_id
 from post p

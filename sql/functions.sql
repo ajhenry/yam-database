@@ -136,3 +136,29 @@ begin
 end;
 $func$
   language plpgsql volatile;
+
+
+-- Function used for getting all the post ids for a subscription feed
+CREATE OR REPLACE FUNCTION get_subscription_post_id(in in_account_id bigint)
+RETURNS BIGINT[] AS 
+$func$
+DECLARE
+ v_post_ids bigint[];
+ rec record;
+ temprow record;
+begin 
+    FOR temprow IN
+        SELECT * FROM subscriptions where account_id = in_account_id
+    LOOP
+      FOR rec IN 
+        select post_id
+        from post_coords
+        where ST_Distance_Sphere(loc_data::geometry, ST_MakePoint(ST_Y(temprow.loc_data::geometry), ST_X(temprow.loc_data::geometry))) <= 10 * 1609.34
+        LOOP
+            v_post_ids = array_append(v_post_ids, rec.post_id);
+        END LOOP;
+    END LOOP;
+    return v_post_ids;
+end;
+$func$
+  language plpgsql volatile;
