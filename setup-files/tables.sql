@@ -75,13 +75,18 @@ create table resources(
     resource_id bigserial primary key,
     post_id bigint references post(post_id) on delete cascade,
     resource_type varchar(6) check(resource_type in ('video', 'image', 'gif', 'other')),
-    resource_url varchar(2085)
+    resource_url varchar(2085),
+    title varchar(100),
+    width int,
+    height int
 );
 
 -- store location data about posts
 create table post_coords(
     post_id bigint references post(post_id) on delete cascade,
-    loc_data geography
+    loc_data geography,
+    city_name varchar(255),
+    city_state varchar(255)
 );
 
 -- create an index based on the location for faster lookup
