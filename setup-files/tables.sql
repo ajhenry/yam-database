@@ -77,6 +77,7 @@ create table resources(
     resource_type varchar(6) check(resource_type in ('video', 'image', 'gif', 'other')),
     resource_url varchar(2085),
     title varchar(100),
+    key_name varchar(512) not null,
     width int,
     height int
 );

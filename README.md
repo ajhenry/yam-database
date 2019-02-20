@@ -38,7 +38,7 @@ CREATE DATABASE yamdb;
 Now lets run the setup files to create the schema and functions
 
 ```sh
-docker cp sql/. postgis-db:/setup-files/
+docker cp setup-files/. postgis-db:/setup-files/
 docker cp setup.sql postgis-db:/setup-files/
 docker exec -it postgis-db sh -c "exec psql -U postgres -d yamdb -a -f setup-files/setup.sql"
 ```
@@ -66,7 +66,7 @@ If there are no tables, please kill/restart the container and try again
 This command will **ERASE** everything thats in the Database
 
 ```sh
-docker cp sql/. postgis-db:/setup-files/
+docker cp setup-files/. postgis-db:/setup-files/
 docker cp setup.sql postgis-db:/setup-files/
 docker exec -it postgis-db sh -c "exec psql -U postgres -d yamdb -a -f setup-files/setup.sql"
 ```
