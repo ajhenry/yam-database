@@ -84,14 +84,21 @@ create table resources(
 
 -- store location data about posts
 create table post_coords(
+    post_coords_id bigserial primary key,
     post_id bigint references post(post_id) on delete cascade,
-    loc_data geography,
-    city_name varchar(255),
-    city_state varchar(255)
+    loc_data geography
 );
 
 -- create an index based on the location for faster lookup
 create index on post_coords using gist (loc_data);
+
+-- Used for storing address information for a LOCATION
+create table address(
+    address_id bigserial primary key,
+    post_coords_id bigint references post_coords(post_coords_id) on delete cascade,
+    city_name varchar(255),
+    city_state varchar(255)
+);
 
 -- table for storing votes on posts
 create table vote(
@@ -109,12 +116,3 @@ create table subscriptions(
 
 -- create an index based on the location for faster lookup
 create index on subscriptions using gist (loc_data);
-
--- currently unused
-create view post_data as
-select p.*, pc.loc_data, v.vote_type, v.account_id as voter_id
-from post p
-left join post_coords pc
-on p.post_id = pc.post_id
-left outer join vote v
-on p.post_id = v.post_id;
